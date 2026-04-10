@@ -18,6 +18,8 @@ MonoBehaviour:
     - 27b5fda6ff7172548843db9f0dd1e773
     - 7ae858d580fe61c4a866bdf6c667d7cb
     - f3e1bee5b744ad746916cc1e0940b898
+    - 0aeee783a2a9b6a47b4bfbb09572f571
+    - bc2d416e77de5174d81a55aec1eac51f
     values:
     - goDatas_byGlobalId:
         keys:
@@ -79,11 +81,57 @@ MonoBehaviour:
         - globalObjectIdString: GlobalObjectId_V1-2-f3e1bee5b744ad746916cc1e0940b898-1922649419-0
         values:
         - colorIndex: 3
-          iconNameOrGuid: 
+          iconNameOrGuid: Canvas Icon
           isIconRecursive: 0
           isColorRecursive: 0
         - colorIndex: 2
           iconNameOrGuid: 
+          isIconRecursive: 0
+          isColorRecursive: 0
+    - goDatas_byGlobalId:
+        keys:
+        - globalObjectIdString: GlobalObjectId_V1-2-0aeee783a2a9b6a47b4bfbb09572f571-1693451461-0
+        - globalObjectIdString: GlobalObjectId_V1-2-0aeee783a2a9b6a47b4bfbb09572f571-1017435335-0
+        - globalObjectIdString: GlobalObjectId_V1-2-0aeee783a2a9b6a47b4bfbb09572f571-1407847224-0
+        - globalObjectIdString: GlobalObjectId_V1-2-0aeee783a2a9b6a47b4bfbb09572f571-1310973938-0
+        values:
+        - colorIndex: 2
+          iconNameOrGuid: 
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 0
+          iconNameOrGuid: Canvas Icon
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 0
+          iconNameOrGuid: VerticalLayoutGroup Icon
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 1
+          iconNameOrGuid: Image Icon
+          isIconRecursive: 0
+          isColorRecursive: 0
+    - goDatas_byGlobalId:
+        keys:
+        - globalObjectIdString: GlobalObjectId_V1-2-bc2d416e77de5174d81a55aec1eac51f-1693451461-0
+        - globalObjectIdString: GlobalObjectId_V1-2-bc2d416e77de5174d81a55aec1eac51f-1017435335-0
+        - globalObjectIdString: GlobalObjectId_V1-2-bc2d416e77de5174d81a55aec1eac51f-1407847224-0
+        - globalObjectIdString: GlobalObjectId_V1-2-bc2d416e77de5174d81a55aec1eac51f-1310973938-0
+        values:
+        - colorIndex: 2
+          iconNameOrGuid: 
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 0
+          iconNameOrGuid: Canvas Icon
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 0
+          iconNameOrGuid: VerticalLayoutGroup Icon
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 1
+          iconNameOrGuid: Image Icon
           isIconRecursive: 0
           isColorRecursive: 0
   bookmarks: []

@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d43d29766e0412797a5b59951c11f85, type: 3}
+  m_Name: ScenesConfig
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Application.Scene.ScenesConfig
+  <BootstrapScene>k__BackingField:
+    m_AssetGUID: f3e1bee5b744ad746916cc1e0940b898
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  <MainMenuScene>k__BackingField:
+    m_AssetGUID: 0aeee783a2a9b6a47b4bfbb09572f571
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  _gameplayScenes:
+  - <DebugName>k__BackingField: Gameplay
+    <MainSceneReference>k__BackingField:
+      m_AssetGUID: bc2d416e77de5174d81a55aec1eac51f
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    <AdditionalSceneReference>k__BackingField: []
