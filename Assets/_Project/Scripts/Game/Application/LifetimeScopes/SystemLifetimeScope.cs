@@ -3,6 +3,7 @@ using Game.Application.Audio;
 using Game.Application.GUI;
 using Game.Application.GUI.WindowSystem;
 using Game.Application.InputSystem;
+using Game.Application.Persistance;
 using Game.Application.Scene;
 using MessagePipe;
 using UnityEngine;
@@ -37,7 +38,8 @@ namespace Game.Application.LifetimeScopes
             builder.RegisterInstance(_camera);
             builder.RegisterInstance(_scenesConfig);
             builder.RegisterInstance(_inputSystem).AsImplementedInterfaces();
-            
+
+            builder.Register<SaveLoadSystem>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<AddressablesLoader>(Lifetime.Singleton).As<IAssetLoader>();
             builder.Register<SceneSystem>(Lifetime.Singleton).As<ISceneSystem>();
             builder.Register<GUISystem>(Lifetime.Singleton).AsImplementedInterfaces();
