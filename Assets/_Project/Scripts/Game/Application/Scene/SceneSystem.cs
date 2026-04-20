@@ -1,8 +1,10 @@
 using System.Collections.Generic;
+using System.Linq;
 using Cysharp.Threading.Tasks;
 using Game.Application.Asset;
 using Game.Application.GUI.LoadingSystem;
 using MessagePipe;
+using R3;
 using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
 using VContainer;
@@ -16,11 +18,12 @@ namespace Game.Application.Scene
 
         [Inject] private IPublisher<LoadingEventMessage> _loadingMessagePub;
         
-        private readonly List<string> _activeSceneKeys = new();
+        private readonly List<ISceneAssetHandle> _activeHandles = new();
 
         async UniTask ISceneSystem.LoadMainMenu()
         {
-            await LoadSingleScene(_scenesConfig.MainMenuScene);
+            UnloadAllScenes();
+            await LoadAndTrack(_scenesConfig.MainMenuScene, LoadSceneMode.Single);
         }
         
         async UniTask ISceneSystem.LoadGameplay(int level)
@@ -28,8 +31,14 @@ namespace Game.Application.Scene
             var data = _scenesConfig.GetGameplayScene(level);
             UnloadAllScenes();
 
-            bool isLoaded = false;
-            _loadingMessagePub.Publish(new LoadingEventMessage(() => isLoaded ? 1f : 0.5f));
+            ReactiveProperty<bool> isLoaded = new();
+            var totalScenes = data.AdditionalSceneReference.Length + 1;
+            
+            _loadingMessagePub.Publish(new LoadingEventMessage(() =>
+            {
+                var progress = _activeHandles.Sum(h => h.Progress);
+                return isLoaded.CurrentValue ? 1f : progress / totalScenes;
+            }));
             
             await LoadAndTrack(data.MainSceneReference, LoadSceneMode.Single);
         
@@ -41,7 +50,8 @@ namespace Game.Application.Scene
                 await UniTask.WhenAll(tasks);
             }
 
-            isLoaded = true;
+            await UniTask.DelayFrame(1);
+            isLoaded.Value = true;
         }
         
         async UniTask ISceneSystem.LoadScene(AssetReference scene, LoadSceneMode sceneMode)
@@ -54,29 +64,27 @@ namespace Game.Application.Scene
 
         void ISceneSystem.UnloadScene(string key)
         {
-            if (!_activeSceneKeys.Remove(key)) return;
+            var handle = _activeHandles.FirstOrDefault(h => h.Key == key);
+            if (handle == null) return;
             
+            _activeHandles.Remove(handle);
             _assetLoader.Release(key);
-        }
-        
-        private async UniTask LoadSingleScene(AssetReference scene)
-        {
-            UnloadAllScenes();
-            await LoadAndTrack(scene, LoadSceneMode.Single);
         }
         
         private async UniTask LoadAndTrack(AssetReference scene, LoadSceneMode mode)
         {
-            await _assetLoader.LoadSceneAsync(scene, mode);
-            _activeSceneKeys.Add(scene.AssetGUID);
+            var handle = _assetLoader.GetSceneHandle(scene.AssetGUID);
+            handle.GetSceneAsync(mode);
+            await handle.Handle.ToUniTask();
+            _activeHandles.Add(handle);
         }
 
         private void UnloadAllScenes()
         {
-            foreach (var key in _activeSceneKeys)
-                _assetLoader.Release(key);
+            foreach (var handle in _activeHandles)
+                _assetLoader.Release(handle.Key);
 
-            _activeSceneKeys.Clear();
+            _activeHandles.Clear();
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -10,87 +11,78 @@ namespace Game.Application.Asset
 {
     public class AddressablesLoader : IAssetLoader
     {
-        private readonly Dictionary<string, AsyncOperationHandle> _handles = new();
+        private readonly Dictionary<string, IAssetHandle> _handles = new(256);
         
-        public async UniTask<T> LoadAsync<T>(string key) where T : UnityEngine.Object
+        UniTask<T> IAssetLoader.LoadAssetAsync<T>(string key)
         {
-            if (_handles.TryGetValue(key, out var existHandle))
-            {
-                if (existHandle.IsValid()) return existHandle.Result as T;
-            }
-
-            var handle = Addressables.LoadAssetAsync<T>(key);
-            await handle.ToUniTask();
-
-            if (handle.Status == AsyncOperationStatus.Succeeded)
-            {
-                _handles[key] = handle;
-                return handle.Result;
-            }
-            
-            Debug.LogError($"[AddressablesLoader] Failed to load asset with key: {key}.");
-            return null;
+            return GetHandle(key).GetAssetAsync<T>();
         }
         
-        public async UniTask<SceneInstance> LoadSceneAsync(AssetReference reference, LoadSceneMode mode)
+        UniTask<SceneInstance> IAssetLoader.LoadSceneAsync(AssetReference reference, LoadSceneMode mode, bool activateOnLoad)
         {
-            if (_handles.TryGetValue(reference.ToString(), out var existHandle))
-            {
-                if (existHandle.IsValid()) return (SceneInstance)existHandle.Result;
-            }
-
-            var handle = Addressables.LoadSceneAsync(reference, mode);
-            await handle.ToUniTask();
-
-            if (handle.Status == AsyncOperationStatus.Succeeded)
-            {
-                _handles[reference.ToString()] = handle;
-                return handle.Result;
-            }
-            
-            Debug.LogError($"[AddressablesLoader] Failed to load scene: {reference}.");
-            return default;
+            return GetSceneHandle(reference.AssetGUID).GetSceneAsync(mode, activateOnLoad);
         }
         
-        public T LoadImmediate<T>(string key) where T : UnityEngine.Object
+        T IAssetLoader.LoadImmediate<T>(string key)
         {
-            if (_handles.TryGetValue(key, out var existHandle))
-            {
-                if (existHandle.IsValid()) return existHandle.Result as T;
-            }
-
-            var handle = Addressables.LoadAssetAsync<T>(key);
-            handle.WaitForCompletion();
-
-            if (handle.Status == AsyncOperationStatus.Succeeded)
-            {
-                _handles[key] = handle;
-                return handle.Result;
-            }
-            
-            Debug.LogError($"[AddressablesLoader] Failed to load asset with key: {key}.");
-            return null;
+            return GetHandle(key).GetAsset<T>();
         }
         
         public void Release(string key)
         {
             if (!_handles.TryGetValue(key, out var handle)) return;
             
-            if (handle.IsValid())
-                Addressables.Release(handle);
-
+            handle.Release();
             _handles.Remove(key);
         }
-        
-        public void Dispose()
+
+        ISceneAssetHandle IAssetLoader.GetSceneHandle(string key)
+        {
+            return GetSceneHandle(key);
+        }
+
+        void IDisposable.Dispose()
         {
             foreach (var handle in _handles.Values)
             {
-                if (handle.IsValid())
-                    Addressables.Release(handle);
+                handle.Release();
             }
             
             _handles.Clear();
+        }
+
+        private ISimpleAssetHandle GetHandle(string key)
+        {
+            if (_handles.TryGetValue(key, out var handle))
+            {
+                if (handle is ISimpleAssetHandle simpleHandle)
+                {
+                    return simpleHandle;
+                }
+                
+                Debug.LogError($"[AddressablesLoader] Wrong handle: {key}.");
+            }
+
+            var newHandle = new SimpleAssetHandle(key);
+            _handles[key] = newHandle;
+            return newHandle;
+        }
+
+        private ISceneAssetHandle GetSceneHandle(string key)
+        {
+            if (_handles.TryGetValue(key, out var handle))
+            {
+                if (handle is ISceneAssetHandle sceneHandle)
+                {
+                    return sceneHandle;
+                }
+                
+                Debug.LogError($"[AddressablesLoader] Wrong handle: {key}.");
+            }
+            
+            var newHandle = new SceneAssetHandle(key);
+            _handles[key] = newHandle;
+            return newHandle;
         }
     }
 }
