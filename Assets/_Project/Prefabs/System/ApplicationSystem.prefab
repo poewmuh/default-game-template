@@ -96,6 +96,7 @@ MonoBehaviour:
     TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
+  _intialGameSaveData: {fileID: 11400000, guid: d077cee898e89934e8d39a0ca3215470, type: 2}
   _scenesConfig: {fileID: 11400000, guid: 6aed499d04a1fe44688c139efbe15268, type: 2}
   _audioSystem: {fileID: 1810944770694617472}
   _inputSystem: {fileID: 3204270608204310112}

@@ -20,6 +20,19 @@ namespace Utils
             if (!Directory.Exists(PersistentPath))
                 Directory.CreateDirectory(PersistentPath);
         }
+
+        public void SaveToFile(string relativePath, object obj)
+        {
+            switch (obj)
+            {
+                case string text:
+                    SaveToFile(relativePath, text);
+                    break;
+                case byte[] bytes:
+                    SaveToFile(relativePath, bytes);
+                    break;
+            }
+        }
         
         public void SaveToFile(string relativePath, byte[] bytes)
         {

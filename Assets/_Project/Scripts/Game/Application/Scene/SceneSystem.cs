@@ -3,6 +3,7 @@ using System.Linq;
 using Cysharp.Threading.Tasks;
 using Game.Application.Asset;
 using Game.Application.GUI.LoadingSystem;
+using Game.Application.Persistence;
 using MessagePipe;
 using R3;
 using UnityEngine.AddressableAssets;
@@ -15,6 +16,7 @@ namespace Game.Application.Scene
     {
         [Inject] private ScenesConfig _scenesConfig;
         [Inject] private IAssetLoader _assetLoader;
+        [Inject] private IGameSaveMediator _gameSaveMediator;
 
         [Inject] private IPublisher<LoadingEventMessage> _loadingMessagePub;
         
@@ -28,6 +30,7 @@ namespace Game.Application.Scene
         
         async UniTask ISceneSystem.LoadGameplay(int level)
         {
+            _gameSaveMediator.GetLevelSaveData().SetLevelIndex(level);
             var data = _scenesConfig.GetGameplayScene(level);
             UnloadAllScenes();
 
@@ -50,6 +53,7 @@ namespace Game.Application.Scene
                 await UniTask.WhenAll(tasks);
             }
 
+            _gameSaveMediator.Save();
             await UniTask.DelayFrame(1);
             isLoaded.Value = true;
         }
