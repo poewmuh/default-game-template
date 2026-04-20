@@ -1,12 +1,13 @@
-﻿using System;
-using Game.Application.GUI.WindowSystem;
+﻿using Game.Application.GUI.WindowSystem;
 using Game.Application.Persistence;
 using Game.Application.Scene;
 using R3;
+using UnityEngine;
 using VContainer;
 
 namespace Game.Windows.MainMenu
 {
+    [RequireComponent(typeof(MainMenuWindowView))]
     public class MainMenuWindow : WindowBase
     {
         [Inject] private ISceneSystem _sceneSystem;
