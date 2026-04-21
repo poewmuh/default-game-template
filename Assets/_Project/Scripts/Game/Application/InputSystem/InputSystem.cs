@@ -20,7 +20,7 @@ namespace Game.Application.InputSystem
 
         public ReactiveProperty<ControlSchemeType> ControlScheme { get; } = new();
 
-        private void Start()
+        private void Awake()
         {
             _inputActions = new InputSystemActions();
             

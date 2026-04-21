@@ -2,6 +2,7 @@ using Game.Application.Asset;
 using Game.Application.Audio;
 using Game.Application.GUI;
 using Game.Application.GUI.LoadingSystem;
+using Game.Application.GUI.OverlaySystem;
 using Game.Application.GUI.WindowSystem;
 using Game.Application.InputSystem;
 using Game.Application.Persistence;
@@ -51,6 +52,7 @@ namespace Game.Application.LifetimeScopes
             builder.Register<WindowSystem>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<InputSwitcher>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<LoadingSystem>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<OverlaySystem>(Lifetime.Singleton).AsImplementedInterfaces();
         }
     }
 }

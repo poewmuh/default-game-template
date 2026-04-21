@@ -6,9 +6,6 @@ namespace Game.Application.LifetimeScopes
 {
     public class MainMenuLifetimeScope : LifetimeScope
     {
-        protected override void Configure(IContainerBuilder builder)
-        {
-            builder.RegisterEntryPoint<MainMenuEntry>();
-        }
+        protected override void Configure(IContainerBuilder builder) { }
     }
 }

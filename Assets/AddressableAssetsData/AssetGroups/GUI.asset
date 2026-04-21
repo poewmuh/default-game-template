@@ -25,6 +25,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 64bff5e9795a7984081b31323ed4dedb
+    m_Address: BlinkOverlay
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f57077ae593f9e04082baa9f130833ff
     m_Address: MainMenuWindow
     m_ReadOnly: 0

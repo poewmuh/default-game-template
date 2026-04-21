@@ -1,6 +1,12 @@
-﻿using Game.Application.GUI.WindowSystem;
+﻿using System;
+using Cysharp.Threading.Tasks;
+using Game.Application.GUI.WindowSystem;
 using Game.Application.Persistence;
 using Game.Application.Scene;
+using Game.Overlays;
+using Game.Overlays.BlinkEffect;
+using Game.Utils.Extensions;
+using MessagePipe;
 using R3;
 using UnityEngine;
 using VContainer;
@@ -12,6 +18,7 @@ namespace Game.Windows.MainMenu
     {
         [Inject] private ISceneSystem _sceneSystem;
         [Inject] private ISaveLoadSystem _saveLoadSystem;
+        [Inject] private IPublisher<BlinkMessageEvent> _blinkMessageSub;
         
         private MainMenuWindowView _windowView;
 
@@ -23,7 +30,7 @@ namespace Game.Windows.MainMenu
             _windowView.OnQuitButtonClicked.Subscribe(OnQuitClicked).AddTo(this);
         }
 
-        private void OnPlayClicked(Unit _)
+        private async void OnPlayClicked(Unit _)
         {
             if (_saveLoadSystem.MetaData.Saves.Count > 0)
             {
@@ -35,11 +42,12 @@ namespace Game.Windows.MainMenu
             }
             
             WindowSystem.Close(this);
-            _sceneSystem.LoadGameplay(_saveLoadSystem.CurrentSaveData.GameplaySaveData.LevelSaveData.LevelIndex);
+            await _sceneSystem.LoadGameplay(_saveLoadSystem.CurrentSaveData.GameplaySaveData.LevelSaveData.LevelIndex);
         }
         
-        private void OnQuitClicked(Unit _)
+        private async void OnQuitClicked(Unit _)
         {
+            await _blinkMessageSub.Blink(FadeType.FadeIn);
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.ExitPlaymode();
 #else

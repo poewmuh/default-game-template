@@ -3,12 +3,8 @@ using VContainer.Unity;
 
 namespace Game.Application.EntryPoints
 {
-    [UsedImplicitly]
-    public class GameplayEntry : IStartable
+    public class GameplayEntry : SceneEntryPoint
     {
-        void IStartable.Start()
-        {
-            
-        }
+        
     }
 }

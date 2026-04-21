@@ -36,8 +36,6 @@ namespace Game.Application.GUI.OverlaySystem
             {
                 _assetLoader.Release(assetKey);
             }
-            
-            Object.Destroy(_overlaysParent.gameObject);
         }
     }
 }

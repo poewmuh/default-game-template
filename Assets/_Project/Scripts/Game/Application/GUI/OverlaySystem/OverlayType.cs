@@ -2,6 +2,7 @@
 {
     public enum OverlayType
     {
-        FadeOverlay
+        FadeOverlay,
+        BlinkOverlay
     }
 }

@@ -6,9 +6,6 @@ namespace Game.Application.LifetimeScopes
 {
     public class GameplayLifetimeScope : LifetimeScope
     {
-        protected override void Configure(IContainerBuilder builder)
-        {
-            builder.RegisterEntryPoint<GameplayEntry>();
-        }
+        protected override void Configure(IContainerBuilder builder) { }
     }
 }

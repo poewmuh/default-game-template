@@ -1,17 +1,24 @@
-﻿using Game.Application.GUI.WindowSystem;
+﻿using DG.Tweening;
+using Game.Application.GUI.WindowSystem;
 using Game.Windows.MainMenu;
+using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
 namespace Game.Application.EntryPoints
 {
-    public class MainMenuEntry : IStartable
+    public class MainMenuEntry : SceneEntryPoint
     {
-        [Inject] private IWindowSystem _windowSystem;
+        [SerializeField] private Transform _cameraTransform;
         
-        void IStartable.Start()
+        [Inject] private IWindowSystem _windowSystem;
+
+        protected override void Initialize()
         {
+            base.Initialize();
+            
             _windowSystem.Show<MainMenuWindow>();
+            _cameraTransform.DOLocalRotate(Vector3.zero, 3f);
         }
     }
 }
