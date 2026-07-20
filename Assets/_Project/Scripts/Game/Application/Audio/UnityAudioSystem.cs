@@ -1,43 +1,53 @@
-using System;
 using UnityEngine;
 
 namespace Game.Application.Audio
 {
     public class UnityAudioSystem : MonoBehaviour, IAudioSystem
     {
+        private bool _warningShown;
+        
         void IAudioSystem.PlayOneShot(string key)
         {
-            throw new NotImplementedException();
+            WarnNotImplemented();
         }
 
         void IAudioSystem.PlayOneShot(string key, Vector3 worldPosition)
         {
-            throw new NotImplementedException();
+            WarnNotImplemented();
         }
 
         void IAudioSystem.PlayMusic(string key)
         {
-            throw new NotImplementedException();
+            WarnNotImplemented();
         }
 
         void IAudioSystem.StopMusic()
         {
-            throw new NotImplementedException();
+            WarnNotImplemented();
         }
 
         void IAudioSystem.PlayAmbient(string key)
         {
-            throw new NotImplementedException();
+            WarnNotImplemented();
         }
 
         void IAudioSystem.StopAmbient(string key)
         {
-            throw new NotImplementedException();
+            WarnNotImplemented();
         }
 
         void IAudioSystem.StopAllAmbient()
         {
-            throw new NotImplementedException();
+            WarnNotImplemented();
+        }
+
+        private void WarnNotImplemented()
+        {
+            if (_warningShown)
+                return;
+
+            _warningShown = true;
+            Debug.LogWarning("[UnityAudioSystem] Audio system is registered, but playback is not implemented yet.");
         }
     }
 }

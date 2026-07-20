@@ -24,7 +24,22 @@ namespace Game.Application.GUI.OverlaySystem
 
         void IOverlaySystem.CreateOverlay(OverlayType type)
         {
-            var overlayKey = type.ToString();
+            CreateOverlay(type.ToString());
+        }
+
+        void IOverlaySystem.CreateOverlay(AssetSUID assetId)
+        {
+            if (assetId == null)
+            {
+                Debug.LogError("[OverlaySystem] Overlay asset SUID is null.");
+                return;
+            }
+
+            CreateOverlay(assetId.UID);
+        }
+
+        private void CreateOverlay(string overlayKey)
+        {
             var instance = _assetLoader.LoadImmediate<GameObject>(overlayKey);
             _objectResolver.Instantiate(instance, _overlaysParent);
             _createdAssetsKey.Add(overlayKey);

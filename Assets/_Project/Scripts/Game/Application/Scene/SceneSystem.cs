@@ -35,7 +35,8 @@ namespace Game.Application.Scene
             UnloadAllScenes();
 
             ReactiveProperty<bool> isLoaded = new();
-            var totalScenes = data.AdditionalSceneReference.Length + 1;
+            var additionalScenes = data.AdditionalSceneReference ?? new AssetReference[0];
+            var totalScenes = additionalScenes.Length + 1;
             
             _loadingMessagePub.Publish(new LoadingEventMessage(() =>
             {
@@ -45,9 +46,9 @@ namespace Game.Application.Scene
             
             await LoadAndTrack(data.MainSceneReference, LoadSceneMode.Single);
         
-            if (data.AdditionalSceneReference is { Length: > 0 })
+            if (additionalScenes.Length > 0)
             {
-                var tasks = data.AdditionalSceneReference
+                var tasks = additionalScenes
                     .Select(scene => LoadAndTrack(scene, LoadSceneMode.Additive));
             
                 await UniTask.WhenAll(tasks);
@@ -78,9 +79,8 @@ namespace Game.Application.Scene
         private async UniTask LoadAndTrack(AssetReference scene, LoadSceneMode mode)
         {
             var handle = _assetLoader.GetSceneHandle(scene.AssetGUID);
-            handle.GetSceneAsync(mode);
-            await handle.Handle.ToUniTask();
             _activeHandles.Add(handle);
+            await handle.GetSceneAsync(mode);
         }
 
         private void UnloadAllScenes()

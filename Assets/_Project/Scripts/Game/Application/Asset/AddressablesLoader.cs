@@ -17,6 +17,11 @@ namespace Game.Application.Asset
         {
             return GetHandle(key).GetAssetAsync<T>();
         }
+
+        UniTask<T> IAssetLoader.LoadAssetAsync<T>(AssetSUID assetId)
+        {
+            return GetHandle(GetKey(assetId)).GetAssetAsync<T>();
+        }
         
         UniTask<SceneInstance> IAssetLoader.LoadSceneAsync(AssetReference reference, LoadSceneMode mode, bool activateOnLoad)
         {
@@ -27,6 +32,11 @@ namespace Game.Application.Asset
         {
             return GetHandle(key).GetAsset<T>();
         }
+
+        T IAssetLoader.LoadImmediate<T>(AssetSUID assetId)
+        {
+            return GetHandle(GetKey(assetId)).GetAsset<T>();
+        }
         
         public void Release(string key)
         {
@@ -34,6 +44,11 @@ namespace Game.Application.Asset
             
             handle.Release();
             _handles.Remove(key);
+        }
+
+        void IAssetLoader.Release(AssetSUID assetId)
+        {
+            Release(GetKey(assetId));
         }
 
         ISceneAssetHandle IAssetLoader.GetSceneHandle(string key)
@@ -83,6 +98,21 @@ namespace Game.Application.Asset
             var newHandle = new SceneAssetHandle(key);
             _handles[key] = newHandle;
             return newHandle;
+        }
+
+        private static string GetKey(AssetSUID assetId)
+        {
+            if (assetId == null)
+            {
+                Debug.LogError("[AddressablesLoader] Asset SUID is null.");
+                return string.Empty;
+            }
+
+            if (!string.IsNullOrWhiteSpace(assetId.UID))
+                return assetId.UID;
+
+            Debug.LogError($"[AddressablesLoader] Asset SUID has empty UID: {assetId.name}.");
+            return string.Empty;
         }
     }
 }

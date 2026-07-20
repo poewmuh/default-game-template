@@ -18,7 +18,10 @@ namespace Game.Application.GUI.WindowSystem
         [Inject] private IInputSwitcher _inputSwitcher;
         
         private readonly List<IWindow> _windowList = new();
+        private readonly Dictionary<IWindow, string> _windowAssetKeys = new();
+        private readonly object _inputLock = new();
         private RectTransform _windowsContainer;
+        private bool _isInputLocked;
         
         int IWindowSystem.WindowsCount => _windowList.Count;
         
@@ -37,12 +40,22 @@ namespace Game.Application.GUI.WindowSystem
 
         T IWindowSystem.Show<T>()
         {
-            var key = typeof(T).Name;
+            return Show<T>(typeof(T).Name);
+        }
+
+        T IWindowSystem.Show<T>(AssetSUID assetId)
+        {
+            return Show<T>(assetId != null ? assetId.UID : typeof(T).Name);
+        }
+
+        private T Show<T>(string key) where T : WindowBase
+        {
             var instance = _assetLoader.LoadImmediate<GameObject>(key);
             IWindow window = _objectResolver.Instantiate(instance, _windowsContainer).GetComponent<IWindow>();
             window.Initialize(this);
             window.OnClosed += HandleOnWindowClosed;
             window.Show();
+            _windowAssetKeys[window] = key;
 
             if (_windowList.Count > 0)
             {
@@ -53,8 +66,7 @@ namespace Game.Application.GUI.WindowSystem
             _windowList.Add(window);
             OnWindowOpened.OnNext(window);
             
-            
-            _inputSwitcher.RequestSwitch(window, InputSwitchMode.UI);
+            UpdateInputLock();
             return (T)window;
         }
         
@@ -91,8 +103,6 @@ namespace Game.Application.GUI.WindowSystem
             {
                 window.Close();
             }
-
-            _windowList.Clear();
         }
         
         void IWindowSystem.CloseLast()
@@ -117,32 +127,60 @@ namespace Game.Application.GUI.WindowSystem
 
         private void Close(IWindow window)
         {
+            if (!_windowList.Contains(window))
+                return;
+
             window.Close();
-            
-            if (_windowList.Count > 0)
-            {
-                var lastWindow = _windowList.Last();
-                lastWindow.SetHidden(false);
-            }
         }
 
         private void HandleOnWindowClosed(WindowBase window)
         {
             window.OnClosed -= HandleOnWindowClosed;
             _windowList.Remove(window);
+            if (!_windowAssetKeys.TryGetValue(window, out var assetKey))
+            {
+                assetKey = window.GetType().Name;
+            }
+
+            _windowAssetKeys.Remove(window);
             OnWindowClosed.OnNext(window);
-            _assetLoader.Release(window.GetType().Name);
+            _assetLoader.Release(assetKey);
             UnityEngine.Object.Destroy(window.gameObject);
 
-            if (((IWindowSystem)this).WindowsCount == 0)
+            if (_windowList.Count > 0)
             {
-                _inputSwitcher.ReleaseSwitch(window);
+                var lastWindow = _windowList.Last();
+                lastWindow.SetHidden(false);
             }
+
+            UpdateInputLock();
         }
 
         void IDisposable.Dispose()
         {
+            if (_isInputLocked)
+                _inputSwitcher.ReleaseSwitch(_inputLock);
+
             _disposables.Dispose();
+        }
+
+        private void UpdateInputLock()
+        {
+            if (_windowList.Count > 0)
+            {
+                if (_isInputLocked)
+                    return;
+
+                _isInputLocked = true;
+                _inputSwitcher.RequestSwitch(_inputLock, InputSwitchMode.UI);
+                return;
+            }
+
+            if (!_isInputLocked)
+                return;
+
+            _isInputLocked = false;
+            _inputSwitcher.ReleaseSwitch(_inputLock);
         }
     }
 }
