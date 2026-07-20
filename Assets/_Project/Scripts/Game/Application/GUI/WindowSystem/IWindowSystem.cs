@@ -1,7 +1,5 @@
 ﻿using R3;
 
-using Game.Application.Asset;
-
 namespace Game.Application.GUI.WindowSystem
 {
     public interface IWindowSystem
@@ -12,7 +10,6 @@ namespace Game.Application.GUI.WindowSystem
         int WindowsCount { get; }
         
         T Show<T>() where T : WindowBase;
-        T Show<T>(AssetSUID assetId) where T : WindowBase;
         void Close(IWindow window);
         void SetHidden<T>(bool isHidden) where T : IWindow;
         void Close<T>() where T : IWindow;

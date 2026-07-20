@@ -43,11 +43,6 @@ namespace Game.Application.GUI.WindowSystem
             return Show<T>(typeof(T).Name);
         }
 
-        T IWindowSystem.Show<T>(AssetSUID assetId)
-        {
-            return Show<T>(assetId != null ? assetId.UID : typeof(T).Name);
-        }
-
         private T Show<T>(string key) where T : WindowBase
         {
             var instance = _assetLoader.LoadImmediate<GameObject>(key);
