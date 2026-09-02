@@ -130,6 +130,7 @@ namespace Game.Application.GUI.WindowSystem
 
         private void HandleOnWindowClosed(WindowBase window)
         {
+			var wasTopWindow = _windowList.Count > 0 && ReferenceEquals(_windowList.Last(), window);
             window.OnClosed -= HandleOnWindowClosed;
             _windowList.Remove(window);
             if (!_windowAssetKeys.TryGetValue(window, out var assetKey))
@@ -142,7 +143,7 @@ namespace Game.Application.GUI.WindowSystem
             _assetLoader.Release(assetKey);
             UnityEngine.Object.Destroy(window.gameObject);
 
-            if (_windowList.Count > 0)
+            if (wasTopWindow && _windowList.Count > 0)
             {
                 var lastWindow = _windowList.Last();
                 lastWindow.SetHidden(false);
